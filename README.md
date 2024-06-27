@@ -23,7 +23,7 @@ TOTP Manager Python based by Akh4th
 
 3. **Run the Configurator:**
     ```bash
-   Configure.exe
+   python3 Configure.py
 
 ## Usage
 
