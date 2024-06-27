@@ -1,6 +1,6 @@
 # TOTP Manager
 
-Windows TOTP Manager Python based by Akh4th
+TOTP Manager Python based by Akh4th
 
 ## Table of Contents
 
