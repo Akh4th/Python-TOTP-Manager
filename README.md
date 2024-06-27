@@ -24,7 +24,6 @@ Windows TOTP Manager Python based by Akh4th
 3. **Run the Configurator:**
     ```bash
    Configure.exe
-   
 
 ## Usage
 
