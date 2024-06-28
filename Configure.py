@@ -2,6 +2,8 @@ import json
 import getpass
 import os
 import base64
+import subprocess
+import sys
 import bcrypt
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
@@ -27,6 +29,14 @@ def enc_pass(password):
     return data
 
 
+def install_requirements():
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-r', "requirements.txt"])
+        print(f"Successfully installed dependencies from requirements.txt.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error installing dependencies from requirements.txt: {e}\n\nPlease make sure to install all the requirements.")
+
+
 def create_config_file():
     while True:
         main_password = get_user_input("Enter main password: ", secure=True)
@@ -49,7 +59,7 @@ def create_config_file():
                 with open(totp_file, 'w') as f:
                     pass
                 print(f"TOTP file '{totp_file}' created.")
-                False
+                break
             except Exception as e:
                 print(f"Error creating TOTP file '{totp_file}': {e}")
         else:
@@ -63,8 +73,8 @@ def create_config_file():
     }
     with open('config.json', 'w') as config_file:
         json.dump(config, config_file, indent=4)
-
     print("Configuration saved to 'config.json'.")
+    install_requirements()
 
 
 if __name__ == "__main__":
