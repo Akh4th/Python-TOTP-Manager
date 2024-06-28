@@ -32,10 +32,11 @@ Once you have configured your json file run the main.exe file and authenticate u
 
 ## Dependencies
 ```bash
+bcrypt==4.1.3
+cryptography==42.0.8
 tk==0.1.0
 ttkbootstrap==1.10.1
 pyotp==2.9.0
-cryptography==42.0.8
 ```
 
 ## Contributing
