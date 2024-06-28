@@ -1,6 +1,9 @@
 import json
 import getpass
 import os
+import base64
+import bcrypt
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
 def get_user_input(prompt, secure=False):
@@ -8,6 +11,20 @@ def get_user_input(prompt, secure=False):
         return getpass.getpass(prompt)
     else:
         return input(prompt)
+
+
+def enc_pass(password):
+    key = AESGCM.generate_key(bit_length=256)
+    aesgcm = AESGCM(key)
+    hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+    nonce = os.urandom(12)
+    encrypted_password = aesgcm.encrypt(nonce, hashed_password, None)
+    data = {
+        'key': base64.b64encode(key).decode(),
+        'nonce': base64.b64encode(nonce).decode(),
+        'password': base64.b64encode(encrypted_password).decode()
+    }
+    return data
 
 
 def create_config_file():
@@ -38,8 +55,9 @@ def create_config_file():
         else:
             break
         totp_file = input("Enter TOTP file path: ").strip()
+    Password = enc_pass(main_password)
     config = {
-        "password": main_password,
+        "password": Password,
         "salt": salt.decode('utf-8'),
         "totp_file": totp_file
     }
