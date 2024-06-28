@@ -8,7 +8,6 @@ TOTP Manager Python based by Akh4th
 - [Usage](#usage)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
