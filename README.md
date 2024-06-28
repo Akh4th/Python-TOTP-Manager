@@ -27,7 +27,8 @@ TOTP Manager Python based by Akh4th
 
 ## Usage
 
-Once you have configured your json file run the main.exe file and authenticate using the same password you provided on the configuration and start managing TOTP locally on your computer
+Once you have configured your json file run the main.exe file and authenticate using the same password you provided on the configuration and start managing TOTP locally on your computer.
+If you seek to compile the python script into an .exe file simply run the python script 'Executable_Generator'.
 
 
 ## Dependencies
