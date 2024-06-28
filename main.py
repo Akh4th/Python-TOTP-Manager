@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter import simpledialog, messagebox
 from tkinter import ttk
+import bcrypt
 from ttkbootstrap import Style
 import pyotp
 import json
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
@@ -19,7 +21,17 @@ def read_config():
         return config['password'], config['salt'], config['totp_file']
 
 
+def decrypt_pass(password):
+    key = base64.b64decode(password['key'])
+    nonce = base64.b64decode(password['nonce'])
+    encrypted_password = base64.b64decode(password['password'])
+    aesgcm = AESGCM(key)
+    hashed_password = aesgcm.decrypt(nonce, encrypted_password, None)
+    return hashed_password
+
+
 PASS, SALT, totp_file = read_config()
+Password = decrypt_pass(PASS)
 
 
 def generate_fernet_key(password, salt):
@@ -30,13 +42,13 @@ def generate_fernet_key(password, salt):
         iterations=100000,
         backend=default_backend()
     )
-    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    key = base64.urlsafe_b64encode(kdf.derive(password))
     cipher_suite = Fernet(key)
-    encrypted_password = cipher_suite.encrypt(password.encode())
+    encrypted_password = cipher_suite.encrypt(password)
     return key, encrypted_password
 
 
-key, encrypted_password = generate_fernet_key(PASS, SALT)
+key, encrypted_password = generate_fernet_key(Password, SALT)
 
 
 def load_totps():
@@ -86,9 +98,7 @@ class TOTPManager:
 
     def verify_password(self, password):
         try:
-            cipher_suite = Fernet(key)
-            decrypted_password = cipher_suite.decrypt(encrypted_password).decode()
-            return password == decrypted_password
+            return bcrypt.checkpw(password.encode(), Password)
         except Exception as e:
             print(f"Error verifying password: {e}")
             return False
