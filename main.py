@@ -148,6 +148,8 @@ class TOTPManager:
     def save_totp(self):
         name = self.name_entry.get()
         secret = self.secret_entry.get()
+        if " " in secret:
+            secret = secret.replace(" ", "")
         if name and secret:
             try:
                 pyotp.TOTP(secret).now()
@@ -185,7 +187,6 @@ class TOTPManager:
         if not self.listbox:
             messagebox.showerror("Error", "No TOTP selected")
             return
-
         selected_name = self.listbox.get(tk.ACTIVE)
         if not selected_name:
             messagebox.showerror("Error", "No TOTP selected")
@@ -193,6 +194,7 @@ class TOTPManager:
         self.clear_widgets()
         frame = ttk.Frame(self.master, padding=20)
         frame.pack(expand=True, fill=tk.BOTH)
+        frame.bind("<Button-1>", self.copy_to_clipboard)
         ttk.Label(frame, text="TOTP Code", style='primary.TLabel', font=('Helvetica', 14)).pack(pady=10)
         totps = load_totps()
         secret = totps[selected_name]
@@ -207,7 +209,7 @@ class TOTPManager:
             code = self.totp.now()
             remaining = 30 - int(time.time()) % 30
             self.code_label.config(text=f"Code: {code}\nValid for: {remaining} seconds")
-            self.master.after(1000, self.update_totp_code)  # Update every second
+            self.master.after(1000, self.update_totp_code)
         except Exception as e:
             print(f"Error updating TOTP code: {e}")
 
@@ -228,6 +230,12 @@ class TOTPManager:
             self.show_main_menu()
         else:
             messagebox.showerror("Error", f"TOTP '{selected_name}' not found")
+
+    def copy_to_clipboard(self, event):
+        code = self.totp.now()
+        self.master.clipboard_clear()
+        self.master.clipboard_append(code)
+        messagebox.showinfo("Copied", "TOTP code copied to clipboard")
 
     def clear_widgets(self):
         for widget in self.master.winfo_children():
