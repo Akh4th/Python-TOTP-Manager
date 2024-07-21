@@ -24,10 +24,6 @@ TOTP Manager Python based by Akh4th
     ```bash
    python3 Configure.py
 
-4. **Compile to EXE (optional):**
-   ```bash
-   python3 Executable_Generator.py
-
 ## Usage
 
 Once you have configured your json file run the main.exe file and authenticate using the same password you provided on the configuration and start managing TOTP locally on your computer.
